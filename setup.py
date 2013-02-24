@@ -13,17 +13,7 @@
 #
 ##############################################################################
 """Setup for z3c.recipe.sphinxdoc package
-
-$Id$
 """
-
-# Check python version
-import sys
-if sys.version_info < (2, 4):
-    print >> sys.stderr, '%s: need Python 2.4 or later.' % sys.argv[0]
-    print >> sys.stderr, 'Your python is %s' % sys.version
-    sys.exit(1)
-
 import os
 from setuptools import setup, find_packages
 
@@ -32,8 +22,9 @@ def read(*rnames):
 
 setup(
     name="z3c.recipe.sphinxdoc",
-    version='0.0.9dev',
-    author="Paul Carduner",
+    version='1.0.0dev',
+    author='Paul Carduner, Zope Foundation and Contributors',
+    author_email="zope-dev@zope.org",
     description="Use Sphinx to build documentation for zope.org.",
     long_description=(
         read(os.path.join('src','z3c','recipe','sphinxdoc','index.txt'))
@@ -41,16 +32,21 @@ setup(
         read('CHANGES.txt')
         ),
     license="ZPL 2.1",
-    maintainer="Paul Carduner",
-    maintainer_email="zope-dev@zope.org",
     classifiers=[
-        "Development Status :: 4 - Beta",
-        "Intended Audience :: Developers",
-        "License :: OSI Approved :: Zope Public License",
-        "Operating System :: OS Independent",
-        "Framework :: Buildout",
-        "Programming Language :: Python"],
-    url='http://pypi.python.org/pypi/z3c.recipe.sphinxdoc/',
+        'Development Status :: 5 - Production/Stable',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: Zope Public License',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: Implementation :: CPython',
+        'Natural Language :: English',
+        'Operating System :: OS Independent',
+        'Framework :: Buildout'],
+    url='https://pypi.python.org/pypi/z3c.recipe.sphinxdoc/',
     packages=find_packages('src'),
     package_dir={'': 'src'},
     namespace_packages=['z3c','z3c.recipe'],
@@ -58,8 +54,7 @@ setup(
         'setuptools',
         'zc.buildout',
         'zc.recipe.egg',
-        'docutils', #Sphinx-0.5.1-py2.4.egg is broken does not
-                    #include docutils as dependency -- this is temporary
+        'docutils',
         'Sphinx'],
     entry_points="""
     [zc.buildout]

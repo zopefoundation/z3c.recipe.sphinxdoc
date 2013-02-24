@@ -2,8 +2,10 @@
 CHANGES
 =======
 
-0.0.9 (unreleased)
+1.0.0 (unreleased)
 ------------------
+
+- Added Python 3.3 support.
 
 - Bug: fix layout directory if layout is overriden by user
 

@@ -12,7 +12,6 @@
 #
 ##############################################################################
 
-import urllib2
 import sys
 import os
 from os.path import join, dirname, isdir, normpath
@@ -22,6 +21,12 @@ import shutil
 import zc.recipe.egg
 import zc.buildout.easy_install
 import pkg_resources
+
+try:
+    from urllib2 import urlopen
+except ImportError:
+    # Py3 location changed.
+    from urllib.request import urlopen
 
 confPyTemplate = """
 templates_path = ['%(templatesDir)s']
@@ -53,7 +58,7 @@ class ZopeOrgSetup(object):
         try:
             f = open(fn)
         except IOError:
-            f = urllib2.urlopen(fn)
+            f = urlopen(fn)
         return f
 
     def install(self):
@@ -166,6 +171,6 @@ class ZopeOrgSetup(object):
 def main(projects):
     import sphinx
     for project, args in projects.items():
-        print "building docs for", project, "---> sphinx-build", " ".join(args)
+        print("building docs for", project, "---> sphinx-build", " ".join(args))
         sphinx.main(argv=sys.argv+args)
 
