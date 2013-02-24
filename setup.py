@@ -22,7 +22,7 @@ def read(*rnames):
 
 setup(
     name="z3c.recipe.sphinxdoc",
-    version='1.0.0',
+    version='1.0.1.dev0',
     author='Paul Carduner, Zope Foundation and Contributors',
     author_email="zope-dev@zope.org",
     description="Use Sphinx to build documentation for zope.org.",
