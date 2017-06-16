@@ -98,8 +98,9 @@ class ZopeOrgSetup(object):
                             join(staticDir, 'default.css'))
                 installed.append(join(staticDir, 'default.css'))
             elif self.options['default.css']:
-                f = self.openfile(self.options['default.css'])
-                open(join(staticDir,'default.css'), 'w').write(f.read())
+                with self.openfile(self.options['default.css']) as f:
+                    with open(join(staticDir,'default.css'), 'w') as w:
+                        w.write(f.read())
                 installed.append(join(staticDir, 'default.css'))
 
             #create templates directory
@@ -112,8 +113,9 @@ class ZopeOrgSetup(object):
                             join(templatesDir, 'layout.html'))
                 installed.append(join(templatesDir, 'layout.html'))
             elif self.options['layout.html']:
-                f = self.openfile(self.options['layout.html'])
-                open(join(templatesDir,'layout.html'), 'w').write(f.read())
+                with self.openfile(self.options['layout.html']) as f:
+                    with open(join(templatesDir,'layout.html'), 'w') as w:
+                        w.write(f.read())
                 installed.append(join(templatesDir, 'layout.html'))
 
             metadata = dict(message_from_string('\n'.join(
