@@ -2,10 +2,12 @@
 CHANGES
 =======
 
-1.0.1 (unreleased)
+1.1.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add support for Python 3.4, 3.5 and 3.6 and PyPy.
+
+- Remove support for Python 2.6 and 3.3.
 
 
 1.0.0 (2013-02-23)
