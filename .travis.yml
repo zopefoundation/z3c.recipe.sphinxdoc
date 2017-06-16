@@ -17,7 +17,7 @@ notifications:
 install:
   - pip install -U pip setuptools
   - pip install -U coveralls coverage
-  - pip install -U -e ".[test]"
+  - pip install -U --no-binary zc.recipe.egg -e ".[test]"
 
 
 cache: pip

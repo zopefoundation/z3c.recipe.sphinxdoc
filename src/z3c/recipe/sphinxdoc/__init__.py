@@ -30,7 +30,7 @@ except ImportError:
 
 confPyTemplate = """
 templates_path = ['%(templatesDir)s']
-source_suffix = '.txt'
+source_suffix = '.rst'
 master_doc = '%(indexDoc)s'
 project = '%(project)s'
 copyright = '%(copyright)s'
@@ -173,4 +173,3 @@ def main(projects):
     for project, args in projects.items():
         print("building docs for", project, "---> sphinx-build", " ".join(args))
         sphinx.main(argv=sys.argv+args)
-

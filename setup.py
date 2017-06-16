@@ -58,6 +58,13 @@ setup(
     install_requires=[
         'setuptools',
         'zc.buildout',
+        # NOTE: Newer pip will fail to install zc.recipe.egg because it wants
+        # to first produce a wheel from the sdist and then install that wheel,
+        # but it has a long-standing bug that prevents installing wheels with
+        # ".egg" in their name. When using pip you must manually install
+        # this dependency with --no-binary zc.recipe.egg.
+        # https://github.com/pypa/pip/issues/3028
+        'zc.recipe.egg',
         'docutils',
         'Sphinx',
     ],
