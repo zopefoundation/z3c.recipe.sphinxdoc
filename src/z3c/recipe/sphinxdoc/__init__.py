@@ -11,7 +11,7 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-
+from __future__ import print_function
 import sys
 import os
 from os.path import join, dirname, isdir, normpath
@@ -56,10 +56,9 @@ class ZopeOrgSetup(object):
 
     def openfile(self, fn):
         try:
-            f = open(fn)
+            return open(fn)
         except IOError:
-            f = urlopen(fn)
-        return f
+            return urlopen(fn)
 
     def install(self):
         installed = []
@@ -78,6 +77,8 @@ class ZopeOrgSetup(object):
         srcDirs = eval(self.options.get('src-dirs','{}'))
 
         projectsData = {}
+        # Preserve projectsData for testing
+        self._projectsData = projectsData
         #for each egg listed as a buildout option, create a configuration space.
         for doc in docs:
             partDir = join(installDir, doc.project_name)
@@ -168,8 +169,11 @@ class ZopeOrgSetup(object):
     update = install
 
 
-def main(projects):
+def main(projects, argv=None, exit_on_error=False):
     import sphinx
+    argv = argv or sys.argv
     for project, args in projects.items():
         print("building docs for", project, "---> sphinx-build", " ".join(args))
-        sphinx.main(argv=sys.argv+args)
+        code = sphinx.build_main(argv=argv+args)
+        if exit_on_error and code:
+            sys.exit(code)
