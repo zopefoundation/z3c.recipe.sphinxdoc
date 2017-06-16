@@ -178,4 +178,4 @@ def main(projects, argv=None, exit_on_error=False):
         print("building docs for", project, "---> sphinx-build", " ".join(args))
         code = sphinx.build_main(argv=argv+args)
         if exit_on_error and code:
-            sys.exit(code)
+            sys.exit(code) # pragma: no cover
