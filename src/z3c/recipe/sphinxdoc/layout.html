@@ -4,7 +4,7 @@
 {%- endblock %}
 {%- set reldelim1 = reldelim1 is not defined and ' &raquo;' or reldelim1 %}
 {%- set reldelim2 = reldelim2 is not defined and ' |' or reldelim2 %}
-{%- macro relbar %}
+{%- macro relbar() %}
 {# this macro needs to stay in layout.html due to it containing blocks #}
     <div class="related">
       <h3>Navigation</h3>
@@ -33,7 +33,7 @@
       </ul>
     </div>
 {%- endmacro %}
-{%- macro sidebar %}
+{%- macro sidebar() %}
       {%- if builder != 'htmlhelp' %}
       <div class="sidebar">
         <div class="sidebarwrapper">
@@ -147,7 +147,7 @@
       <a href="http://new.zope.org" accesskey="1" id="portal-logo">
 	<img width="110" height="36" title="" alt="" src="http://new.zope.org/logo.png"/>
       </a>
-	
+
       <ul id="portal-globalnav">
 	<li class="plain" id="portaltab-index_html">
 	  <a title="" href="http://new.zope.org">Home</a>

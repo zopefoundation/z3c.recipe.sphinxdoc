@@ -1,22 +1,26 @@
-=======
-CHANGES
-=======
+=========
+ CHANGES
+=========
 
-1.0.1 (unreleased)
-------------------
+1.1.0 (unreleased)
+==================
 
-- Nothing changed yet.
+- Add support for Python 3.4, 3.5 and 3.6 and PyPy.
+
+- Remove support for Python 2.6 and 3.3.
+
+- Change the default source suffix from ``.txt`` to ``.rst``.
 
 
 1.0.0 (2013-02-23)
-------------------
+==================
 
 - Added Python 3.3 support.
 
 - Bug: fix layout directory if layout is overriden by user
 
 0.0.8 (2009-05-01)
-------------------
+==================
 
 - Feature: Added new option `doc-eggs` which specifies the list of eggs for
   which to create documentation explicitely.
@@ -29,19 +33,19 @@ CHANGES
   used to build the documentation.
 
 0.0.7 (2009-02-15)
-------------------
+==================
 
 - Bug: fix python 2.4 support
 
 - Bug: fix broken srcDir path generation for windows
 
 0.0.6 (2009-01-19)
-------------------
+==================
 
 - Feature: Allow you to specify a url or local file path to your own
   default.css and layout.html files.
 
 0.0.5 (2008-05-11)
-------------------
+==================
 
 - Initial release.
