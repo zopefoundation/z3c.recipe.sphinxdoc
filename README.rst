@@ -1,1 +1,1 @@
-See src/z3c/recipe/sphinxdoc/index.txt for more information.
+See src/z3c/recipe/sphinxdoc/index.rst for more information.

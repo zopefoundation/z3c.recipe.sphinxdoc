@@ -114,12 +114,9 @@ class TestZopeOrgSetup(unittest.TestCase):
             css = f.read()
             self.assertEqual(css, '')
 
-
-
     def test_override_layout(self):
         docs, _ = self._makeOne(options={'layout.html': EMPTY_FILE})
         docs.install()
-
 
         html_path = os.path.join(self.templates_path, 'layout.html')
         with open(html_path, 'r') as f:

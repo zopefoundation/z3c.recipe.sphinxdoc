@@ -53,12 +53,33 @@ class ZopeOrgSetup(object):
         options['script'] = join(buildout['buildout']['bin-directory'],
                                  options.get('script', self.name))
         self.egg = zc.recipe.egg.Egg(self.buildout, self.name, self.options)
+        self._projectsData = {}
 
     def openfile(self, fn):
         try:
             return open(fn)
         except IOError:
             return urlopen(fn)
+
+    def _copy_static_file(self, installed, partDir, dirName, fileName):
+        destDir = join(partDir, dirName)
+
+        if not isdir(destDir):
+            os.mkdir(destDir)
+        installed.append(destDir)
+
+        if fileName not in self.options:
+            recipeDir = dirname(__file__)
+            shutil.copy(join(recipeDir, fileName),
+                        join(destDir, fileName))
+            installed.append(join(destDir, fileName))
+        elif self.options[fileName]:
+            with self.openfile(self.options[fileName]) as f:
+                with open(join(destDir, fileName), 'w') as w:
+                    w.write(f.read())
+            installed.append(join(destDir, fileName))
+        return destDir
+
 
     def install(self):
         installed = []
@@ -86,55 +107,32 @@ class ZopeOrgSetup(object):
                 os.mkdir(partDir)
             installed.append(partDir)
 
-            recipeDir = dirname(__file__)
+            # create static directory
+            staticDir = self._copy_static_file(installed, partDir,
+                                               '.static', 'default.css')
 
-            #create static directory
-            staticDir = join(partDir, '.static')
-            if not isdir(staticDir):
-                os.mkdir(staticDir)
-            installed.append(staticDir)
-            if 'default.css' not in self.options:
-                shutil.copy(join(recipeDir,'default.css'),
-                            join(staticDir, 'default.css'))
-                installed.append(join(staticDir, 'default.css'))
-            elif self.options['default.css']:
-                with self.openfile(self.options['default.css']) as f:
-                    with open(join(staticDir,'default.css'), 'w') as w:
-                        w.write(f.read())
-                installed.append(join(staticDir, 'default.css'))
-
-            #create templates directory
-            templatesDir = join(partDir, '.templates')
-            if not isdir(templatesDir):
-                os.mkdir(templatesDir)
-            installed.append(templatesDir)
-            if 'layout.html' not in self.options:
-                shutil.copy(join(recipeDir,'layout.html'),
-                            join(templatesDir, 'layout.html'))
-                installed.append(join(templatesDir, 'layout.html'))
-            elif self.options['layout.html']:
-                with self.openfile(self.options['layout.html']) as f:
-                    with open(join(templatesDir,'layout.html'), 'w') as w:
-                        w.write(f.read())
-                installed.append(join(templatesDir, 'layout.html'))
+            # create templates directory
+            templatesDir = self._copy_static_file(installed, partDir,
+                                                  '.templates', 'layout.html')
 
             metadata = dict(message_from_string('\n'.join(
                 doc._get_metadata('PKG-INFO'))).items())
 
-            #create conf.py
+            # create conf.py
             confPyPath = join(partDir, 'conf.py')
-            confPy = open(confPyPath, 'w')
-            confPy.write(confPyTemplate % dict(
-                project=metadata.get('Name', doc.project_name),
-                copyright=metadata.get('Author', 'Zope Community'),
-                version=metadata.get('Version', doc.version),
-                release=metadata.get('Version', doc.version),
-                staticDir=staticDir,
-                templatesDir=templatesDir,
-                indexDoc=self.options.get('index-doc','index'),
-                extensions=self.options.get('extensions','').split()
-                ))
-            confPy.close()
+            with open(confPyPath, 'w') as confPy:
+                confPy.write(confPyTemplate % dict(
+                    project=metadata.get('Name', doc.project_name),
+                    copyright=metadata.get('Author', 'Zope Community'),
+                    version=metadata.get('Version', doc.version),
+                    release=metadata.get('Version', doc.version),
+                    staticDir=staticDir,
+                    templatesDir=templatesDir,
+                    indexDoc=self.options.get('index-doc','index'),
+                    extensions=self.options.get('extensions','').split()
+                    )
+                )
+
             installed.append(confPyPath)
 
             buildDir = self.options.get('build-dir',
@@ -158,7 +156,7 @@ class ZopeOrgSetup(object):
             [(self.options['script'],
               'z3c.recipe.sphinxdoc',
               'main'),
-             ],
+            ],
             workingSet,
             self.options['executable'],
             self.buildout['buildout']['bin-directory'],
