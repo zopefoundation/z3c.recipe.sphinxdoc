@@ -66,6 +66,14 @@ class TestZopeOrgSetup(unittest.TestCase):
     def static_path(self):
         return os.path.join(self.part_path, '.static')
 
+    @property
+    def default_css_path(self):
+        return os.path.join(self.static_path, 'default.css')
+
+    @property
+    def layout_html_path(self):
+        return os.path.join(self.templates_path, 'layout.html')
+
     def _check_conf_py_can_be_evald(self):
         args = [sys.executable,
                 '-c',
@@ -96,6 +104,8 @@ class TestZopeOrgSetup(unittest.TestCase):
 
         self.assertIn(os.path.abspath(self.templates_path), conf)
         self.assertIn(os.path.abspath(self.static_path), conf)
+        # We didn't override default.css so it was inserted by default
+        self.assertIn("html_style = 'default.css", conf)
 
         script_path = os.path.join('bin', docs.name)
         with open(script_path, 'r') as f:
@@ -103,8 +113,7 @@ class TestZopeOrgSetup(unittest.TestCase):
         self.assertIn("sys.exit(z3c.recipe.sphinxdoc.main({'z3c.recipe.sphinxdoc':",
                       script)
 
-        # Go ahead and generate it, or at least try to, it shouldn't fail, even though there's no
-        # index.rst
+        # Go ahead and generate it
         subprocess.check_call('bin/docs')
 
         # likewise, we can directly try to do it and it doesn't raise an exception
@@ -121,16 +130,19 @@ class TestZopeOrgSetup(unittest.TestCase):
         docs, _ = self._makeOne(options={'default.css': EMPTY_FILE})
         docs.install()
 
-        css_path = os.path.join(self.static_path, 'default.css')
+        css_path = self.default_css_path
         with open(css_path, 'r') as f:
             css = f.read()
             self.assertEqual(css, '')
+
+        conf = self._read_conf_file()
+        self.assertIn("html_style = 'default.css'", conf)
 
     def test_override_layout(self):
         docs, _ = self._makeOne(options={'layout.html': EMPTY_FILE})
         docs.install()
 
-        html_path = os.path.join(self.templates_path, 'layout.html')
+        html_path = self.layout_html_path
         with open(html_path, 'r') as f:
             html = f.read()
             self.assertEqual(html, '')
@@ -154,3 +166,21 @@ class TestZopeOrgSetup(unittest.TestCase):
         self._check_conf_py_can_be_evald()
         conf = self._read_conf_file()
         self.assertIn('intersphinx_mapping', conf)
+
+
+    def test_no_default_css_not_included(self):
+        docs, _ = self._makeOne(options={'layout.html': '',
+                                         'default.css': '',
+                                         'extra-conf': "html_theme='classic'"})
+        docs.install()
+        self._check_conf_py_can_be_evald()
+        conf = self._read_conf_file()
+
+        # It was completely ommitted
+        self.assertNotIn('html_style', conf)
+
+        # Nothing was copied
+        self.assertFalse(os.path.exists(self.default_css_path), self.default_css_path)
+        self.assertFalse(os.path.exists(self.layout_html_path), self.layout_html_path)
+
+        subprocess.check_call('bin/docs')

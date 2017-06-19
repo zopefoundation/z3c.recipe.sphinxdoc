@@ -17,6 +17,12 @@
   extensions, overriding the defaults set by this recipe, and
   configuring a sphinx theme.
 
+- Stop forcing a value of ``default.css`` for ``html_style`` even when
+  the ``default.css`` setting is configured to an empty value. This
+  makes it possible to use ``html_theme`` to set a sphinx theme, and
+  it properly lets the default Sphinx theme be used (by setting both
+  ``default.css`` and ``layout.html`` to empty values).
+
 
 1.0.0 (2013-02-23)
 ==================
