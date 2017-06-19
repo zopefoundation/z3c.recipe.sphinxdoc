@@ -23,6 +23,11 @@
   it properly lets the default Sphinx theme be used (by setting both
   ``default.css`` and ``layout.html`` to empty values).
 
+- Ignore bad eggs in the documentation working set. Previously they
+  would raise internal errors without any explanation. Now, they log a
+  warning pinpointing the bad egg. Fixes `issue 6
+  <https://github.com/zopefoundation/z3c.recipe.sphinxdoc/issues/6>`_.
+
 
 1.0.0 (2013-02-23)
 ==================

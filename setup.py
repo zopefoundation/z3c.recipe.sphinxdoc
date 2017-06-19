@@ -70,6 +70,7 @@ setup(
     ],
     extras_require={
         'test': [
+            'zope.testing',
             'zope.testrunner',
         ],
     },

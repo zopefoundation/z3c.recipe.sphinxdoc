@@ -96,8 +96,8 @@ class TestZopeOrgSetup(unittest.TestCase):
         self.assertRaises(IOError,
                           docs.openfile, 'file:///')
 
-    def test_basic_install(self):
-        docs, _ = self._makeOne()
+    def test_basic_install(self, options=None):
+        docs, _ = self._makeOne(options=options)
         docs.install()
         self._check_conf_py_can_be_evald()
         conf = self._read_conf_file()
@@ -125,6 +125,22 @@ class TestZopeOrgSetup(unittest.TestCase):
         projects['another'][0] = '-W'
 
         sphinxdoc.main(docs._projectsData, argv=['docs'], exit_on_error=True)
+
+    def test_install_with_bad_doc_egg(self):
+        from zope.testing.loggingsupport import InstalledHandler
+        handler = InstalledHandler('z3c.recipe.sphinxdoc')
+        self.addCleanup(handler.uninstall)
+
+        self.test_basic_install(options={
+            'doc-eggs': 'z3c.recipe.sphinxdoc this.egg.is.not.installed'
+        })
+
+        log_records = handler.records
+        self.assertEqual(1, len(log_records))
+        record = log_records[0]
+        self.assertEqual("WARNING", record.levelname)
+        self.assertEqual("Specified egg 'this.egg.is.not.installed' cannot be resolved, ignoring.",
+                         record.getMessage())
 
     def test_override_css(self):
         docs, _ = self._makeOne(options={'default.css': EMPTY_FILE})
