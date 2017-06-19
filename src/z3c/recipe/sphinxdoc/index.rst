@@ -78,7 +78,7 @@ Additional Options
 ==================
 
 By default, this recipe generates documentation that looks like the
-new zope website ( http://new.zope.org ) by overiding the default
+new zope website ( http://new.zope.org ) by overriding the default
 layout template and css file used by sphinx.  You can modify this
 behavior with options in your buildout configuration.
 
