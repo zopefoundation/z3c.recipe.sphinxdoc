@@ -12,6 +12,7 @@
 #
 ##############################################################################
 
+import logging
 import shutil
 import subprocess
 import sys
@@ -38,9 +39,20 @@ class TestZopeOrgSetup(unittest.TestCase):
         os.chdir(self.tmpdir)
         os.mkdir('bin')
 
+        # Sphinx likes to install handlers when you call its main methods.
+        # If we pass -W (and we do) those turn warnings into hard errors.
+        # This pollutes later tests. So be sure to tear those down.
+        self.handlers_before_set_up = logging.getLogger().handlers[:]
+
     def tearDown(self):
         os.chdir(self.here)
         shutil.rmtree(self.tmpdir)
+
+        root_logger = logging.getLogger()
+        for handler in root_logger.handlers[:]:
+            root_logger.removeHandler(handler)
+        for handler in self.handlers_before_set_up:
+            root_logger.addHandler(handler)
 
     def _makeOne(self, name='docs', options=None):
         opts = {
