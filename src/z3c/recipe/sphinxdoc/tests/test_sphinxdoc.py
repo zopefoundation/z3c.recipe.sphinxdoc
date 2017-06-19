@@ -14,6 +14,7 @@
 
 import shutil
 import subprocess
+import sys
 import tempfile
 import os
 import unittest
@@ -65,6 +66,18 @@ class TestZopeOrgSetup(unittest.TestCase):
     def static_path(self):
         return os.path.join(self.part_path, '.static')
 
+    def _check_conf_py_can_be_evald(self):
+        args = [sys.executable,
+                '-c',
+                'import sys; sys.path.insert(0, "%s"); import conf' % self.part_path]
+        subprocess.check_call(args)
+
+    def _read_conf_file(self):
+        conf_path = os.path.join(self.part_path, 'conf.py')
+        with open(conf_path, 'r') as f:
+            conf = f.read()
+        return conf
+
     def test_construct_sets_script(self):
         docs, buildout = self._makeOne()
         self.assertEqual(docs.options['script'],
@@ -78,9 +91,8 @@ class TestZopeOrgSetup(unittest.TestCase):
     def test_basic_install(self):
         docs, _ = self._makeOne()
         docs.install()
-        conf_path = os.path.join(self.part_path, 'conf.py')
-        with open(conf_path, 'r') as f:
-            conf = f.read()
+        self._check_conf_py_can_be_evald()
+        conf = self._read_conf_file()
 
         self.assertIn(os.path.abspath(self.templates_path), conf)
         self.assertIn(os.path.abspath(self.static_path), conf)
@@ -122,3 +134,23 @@ class TestZopeOrgSetup(unittest.TestCase):
         with open(html_path, 'r') as f:
             html = f.read()
             self.assertEqual(html, '')
+
+    def test_extra_conf(self):
+        import textwrap
+        docs, _ = self._makeOne(options={
+            'extra-conf': textwrap.dedent("""\
+            autodoc_default_flags = ['members', 'show-inheritance',]
+            autoclass_content = 'both'
+            intersphinx_mapping = {
+            'python':  ('http://docs.python.org/2.7/', None),
+            'boto': ('http://boto.readthedocs.org/en/latest/', None),
+            'gunicorn': ('http://docs.gunicorn.org/en/latest/', None),
+            'pyquery': ('http://packages.python.org/pyquery/', None) }
+            intersphinx_cache_limit = -1
+            """
+            )
+        })
+        docs.install()
+        self._check_conf_py_can_be_evald()
+        conf = self._read_conf_file()
+        self.assertIn('intersphinx_mapping', conf)

@@ -42,6 +42,7 @@ html_style = 'default.css'
 html_static_path = ['%(staticDir)s']
 html_last_updated_fmt = '%%b %%d, %%Y'
 extensions = %(extensions)r
+%(extra_conf)s
 """
 
 class ZopeOrgSetup(object):
@@ -129,7 +130,8 @@ class ZopeOrgSetup(object):
                     staticDir=staticDir,
                     templatesDir=templatesDir,
                     indexDoc=self.options.get('index-doc','index'),
-                    extensions=self.options.get('extensions','').split()
+                    extensions=self.options.get('extensions','').split(),
+                    extra_conf=self.options.get('extra-conf', ''),
                     )
                 )
 
@@ -162,7 +164,7 @@ class ZopeOrgSetup(object):
             self.buildout['buildout']['bin-directory'],
             extra_paths=self.egg.extra_paths,
             arguments = "%r" % projectsData,
-            ))
+        ))
 
         return installed
 

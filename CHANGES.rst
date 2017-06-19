@@ -9,7 +9,13 @@
 
 - Remove support for Python 2.6 and 3.3.
 
-- Change the default source suffix from ``.txt`` to ``.rst``.
+- Change the default source suffix from ``.txt`` to ``.rst``. You can
+  override this using the new ``extra-conf`` setting.
+
+- Add the ability to specify arbitrary configuration in the
+  ``extra-conf`` setting. This is useful for things like configuring
+  extensions, overriding the defaults set by this recipe, and
+  configuring a sphinx theme.
 
 
 1.0.0 (2013-02-23)
