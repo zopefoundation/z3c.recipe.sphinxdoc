@@ -78,7 +78,7 @@ Additional Options
 ==================
 
 By default, this recipe generates documentation that looks like the
-new zope website ( http://new.zope.org ) by ovveriding the default
+new zope website ( http://new.zope.org ) by overriding the default
 layout template and css file used by sphinx.  You can modify this
 behavior with options in your buildout configuration.
 
@@ -111,11 +111,49 @@ url to an external css file.
 Use sphinx extension modules
 ----------------------------
 
-Sphinx provides a set of extensions, for example `sphinx.ext.autodoc`
-or `sphinx.ext.doctest`. To use such an extension change your
+Sphinx provides a set of extensions, for example ``sphinx.ext.autodoc``
+or ``sphinx.ext.doctest``. To use such an extension change your
 configuration like::
 
   [docs]
   recipe = z3c.recipe.sphinxdoc
   eggs = z3c.form [docs]
   extensions = sphinx.ext.autodoc sphinx.ext.doctest
+
+Arbitrary Configuration
+-----------------------
+
+Sphinx and its extensions offer many configuration options. You can
+specify any of those by using the ``extra-conf`` option. This option
+takes a sequence of lines that are simply inserted into the generated
+``conf.py``. Anything you specify here will override other settings
+this recipe established (just watch your leading line indentation)::
+
+  [docs]
+  recipe = z3c.recipe.sphinxdoc
+  eggs = z3c.form [docs]
+  extensions = sphinx.ext.autodoc
+               sphinx.ext.todo
+               sphinx.ext.viewcode
+               sphinx.ext.intersphinx
+               repoze.sphinx.autointerface
+               sphinxcontrib.programoutput
+  default.css =
+  layout.html =
+  extra-conf =
+           autodoc_default_flags = ['members', 'show-inheritance',]
+           autoclass_content = 'both'
+           intersphinx_mapping = {
+           'python':  ('http://docs.python.org/2.7/', None),
+           'boto': ('http://boto.readthedocs.org/en/latest/', None),
+           'gunicorn': ('http://docs.gunicorn.org/en/latest/', None),
+           'pyquery': ('http://packages.python.org/pyquery/', None) }
+           intersphinx_cache_limit = -1
+           todo_include_todos = True
+
+           # The suffix of source filenames. Override back to txt.
+           source_suffix = '.txt'
+
+           # Choose an entire theme. Note that we disabled layout.html
+           # and default.css.
+           html_theme = 'classic'
