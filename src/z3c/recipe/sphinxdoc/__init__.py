@@ -38,7 +38,7 @@ version = '%(version)s'
 release = '%(release)s'
 today_fmt = '%%B %%d, %%Y'
 pygments_style = 'sphinx'
-html_style = 'default.css'
+%(html_style)s
 html_static_path = ['%(staticDir)s']
 html_last_updated_fmt = '%%b %%d, %%Y'
 extensions = %(extensions)r
@@ -69,17 +69,21 @@ class ZopeOrgSetup(object):
             os.mkdir(destDir)
         installed.append(destDir)
 
+        usingFile = False
+
         if fileName not in self.options:
             recipeDir = dirname(__file__)
             shutil.copy(join(recipeDir, fileName),
                         join(destDir, fileName))
             installed.append(join(destDir, fileName))
+            usingFile = True
         elif self.options[fileName]:
             with self.openfile(self.options[fileName]) as f:
                 with open(join(destDir, fileName), 'w') as w:
                     w.write(f.read())
             installed.append(join(destDir, fileName))
-        return destDir
+            usingFile = True
+        return destDir, usingFile
 
 
     def install(self):
@@ -109,12 +113,14 @@ class ZopeOrgSetup(object):
             installed.append(partDir)
 
             # create static directory
-            staticDir = self._copy_static_file(installed, partDir,
-                                               '.static', 'default.css')
+            staticDir, usingDefaultCss = self._copy_static_file(
+                installed, partDir,
+                '.static', 'default.css')
 
             # create templates directory
-            templatesDir = self._copy_static_file(installed, partDir,
-                                                  '.templates', 'layout.html')
+            templatesDir, _ = self._copy_static_file(
+                installed, partDir,
+                '.templates', 'layout.html')
 
             metadata = dict(message_from_string('\n'.join(
                 doc._get_metadata('PKG-INFO'))).items())
@@ -129,6 +135,9 @@ class ZopeOrgSetup(object):
                     release=metadata.get('Version', doc.version),
                     staticDir=staticDir,
                     templatesDir=templatesDir,
+                    html_style=("html_style = 'default.css'"
+                                if usingDefaultCss
+                                else ''),
                     indexDoc=self.options.get('index-doc','index'),
                     extensions=self.options.get('extensions','').split(),
                     extra_conf=self.options.get('extra-conf', ''),
