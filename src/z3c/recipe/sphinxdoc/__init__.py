@@ -12,6 +12,7 @@
 #
 ##############################################################################
 from __future__ import print_function
+
 import sys
 import os
 from os.path import join, dirname, isdir, normpath
@@ -27,6 +28,8 @@ try:
 except ImportError:
     # Py3 location changed.
     from urllib.request import urlopen
+
+logger = __import__('logging').getLogger(__name__)
 
 confPyTemplate = """
 templates_path = ['%(templatesDir)s']
@@ -91,7 +94,7 @@ class ZopeOrgSetup(object):
         eggs, workingSet = self.egg.working_set()
         if 'doc-eggs' in self.options:
             eggs = self.options['doc-eggs'].split()
-        docs = [workingSet.find(pkg_resources.Requirement.parse(spec))
+        docs = [(workingSet.find(pkg_resources.Requirement.parse(spec)), spec)
                 for spec in eggs]
 
         # Create parts directory for configuration files.
@@ -105,8 +108,12 @@ class ZopeOrgSetup(object):
         projectsData = {}
         # Preserve projectsData for testing
         self._projectsData = projectsData
-        #for each egg listed as a buildout option, create a configuration space.
-        for doc in docs:
+        # for each egg listed as a buildout option, create a configuration space.
+        for doc, egg_name in docs:
+            if not doc:
+                logger.warning("Specified egg '%s' cannot be resolved, ignoring.", egg_name)
+                continue
+
             partDir = join(installDir, doc.project_name)
             if not isdir(partDir):
                 os.mkdir(partDir)
