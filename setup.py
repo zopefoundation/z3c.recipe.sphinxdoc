@@ -17,19 +17,21 @@
 import os
 from setuptools import setup, find_packages
 
+
 def read(*rnames):
     with open(os.path.join(os.path.dirname(__file__), *rnames)) as f:
         return f.read()
 
+
 setup(
     name="z3c.recipe.sphinxdoc",
-    version='1.1.1.dev0',
+    version='1.2.0.dev0',
     author='Paul Carduner, Zope Foundation and Contributors',
     author_email="zope-dev@zope.org",
     description="Use Sphinx to build documentation for zope.org.",
     long_description=(
-        read(os.path.join('src','z3c','recipe','sphinxdoc','index.rst'))
-        +'\n\n'+
+        read(os.path.join('src', 'z3c', 'recipe', 'sphinxdoc', 'index.rst'))
+        + '\n\n' +
         read('CHANGES.rst')
     ),
     keywords="buildout sphinx docs recipe",
@@ -42,9 +44,11 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
         'Natural Language :: English',
@@ -54,7 +58,7 @@ setup(
     url='https://github.com/zopefoundation/z3c.recipe.sphinxdoc/',
     packages=find_packages('src'),
     package_dir={'': 'src'},
-    namespace_packages=['z3c','z3c.recipe'],
+    namespace_packages=['z3c', 'z3c.recipe'],
     install_requires=[
         'setuptools',
         'zc.buildout',

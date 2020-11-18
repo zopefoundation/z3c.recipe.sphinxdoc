@@ -48,6 +48,7 @@ extensions = %(extensions)r
 %(extra_conf)s
 """
 
+
 class ZopeOrgSetup(object):
 
     def __init__(self, buildout, name, options):
@@ -88,7 +89,6 @@ class ZopeOrgSetup(object):
             usingFile = True
         return destDir, usingFile
 
-
     def install(self):
         installed = []
         eggs, workingSet = self.egg.working_set()
@@ -103,15 +103,18 @@ class ZopeOrgSetup(object):
         if not isdir(installDir):
             os.mkdir(installDir)
 
-        srcDirs = eval(self.options.get('src-dirs','{}'))
+        srcDirs = eval(self.options.get('src-dirs', '{}'))
 
         projectsData = {}
         # Preserve projectsData for testing
         self._projectsData = projectsData
-        # for each egg listed as a buildout option, create a configuration space.
+        # for each egg listed as a buildout option, create a configuration
+        # space.
         for doc, egg_name in docs:
             if not doc:
-                logger.warning("Specified egg '%s' cannot be resolved, ignoring.", egg_name)
+                logger.warning(
+                    "Specified egg '%s' cannot be resolved, ignoring.",
+                    egg_name)
                 continue
 
             partDir = join(installDir, doc.project_name)
@@ -145,11 +148,10 @@ class ZopeOrgSetup(object):
                     html_style=("html_style = 'default.css'"
                                 if usingDefaultCss
                                 else ''),
-                    indexDoc=self.options.get('index-doc','index'),
-                    extensions=self.options.get('extensions','').split(),
+                    indexDoc=self.options.get('index-doc', 'index'),
+                    extensions=self.options.get('extensions', '').split(),
                     extra_conf=self.options.get('extra-conf', ''),
-                    )
-                )
+                ))
 
             installed.append(confPyPath)
 
@@ -162,24 +164,25 @@ class ZopeOrgSetup(object):
             if not isdir(buildDir):
                 os.mkdir(buildDir)
 
-            srcDir = join(doc.location, srcDirs.get(doc.project_name,
-                self.options.get('src-dir', doc.project_name.replace('.','/'))))
+            srcDir = join(doc.location, srcDirs.get(
+                doc.project_name,
+                self.options.get('src-dir',
+                                 doc.project_name.replace('.', '/'))))
             # fix bad path on windows (e.g. //foo\bar)
             srcDir = normpath(srcDir)
 
-            projectsData[doc.project_name] = ['-q','-c', partDir,
+            projectsData[doc.project_name] = ['-q', '-c', partDir,
                                               srcDir, buildDir]
 
         installed.extend(zc.buildout.easy_install.scripts(
             [(self.options['script'],
               'z3c.recipe.sphinxdoc',
-              'main'),
-            ],
+              'main')],
             workingSet,
             self.options['executable'],
             self.buildout['buildout']['bin-directory'],
             extra_paths=self.egg.extra_paths,
-            arguments = "%r" % projectsData,
+            arguments="%r" % projectsData,
         ))
 
         return installed
@@ -188,10 +191,12 @@ class ZopeOrgSetup(object):
 
 
 def main(projects, argv=None, exit_on_error=False):
-    import sphinx
+    import sphinx.cmd.build
     argv = argv or sys.argv
     for project, args in projects.items():
-        print("building docs for", project, "---> sphinx-build", " ".join(args))
-        code = sphinx.build_main(argv=argv+args)
+        print(
+            "building docs for", project, "---> sphinx-build", " ".join(args))
+        main_args = argv + args
+        code = sphinx.cmd.build.build_main(main_args[1:])
         if exit_on_error and code:
-            sys.exit(code) # pragma: no cover
+            sys.exit(code)  # pragma: no cover
