@@ -31,6 +31,7 @@ EMPTY_FILE = os.path.abspath(
     )
 )
 
+
 class TestZopeOrgSetup(unittest.TestCase):
 
     def setUp(self):
@@ -89,7 +90,8 @@ class TestZopeOrgSetup(unittest.TestCase):
     def _check_conf_py_can_be_evald(self):
         args = [sys.executable,
                 '-c',
-                'import sys; sys.path.insert(0, "%s"); import conf' % self.part_path]
+                'import sys; sys.path.insert(0, "%s"); import conf'
+                % self.part_path]
         subprocess.check_call(args)
 
     def _read_conf_file(self):
@@ -100,8 +102,9 @@ class TestZopeOrgSetup(unittest.TestCase):
 
     def test_construct_sets_script(self):
         docs, buildout = self._makeOne()
-        self.assertEqual(docs.options['script'],
-                         os.path.join(buildout['buildout']['bin-directory'], 'docs'))
+        self.assertEqual(
+            docs.options['script'],
+            os.path.join(buildout['buildout']['bin-directory'], 'docs'))
 
     def test_openfile_falls_to_url(self):
         docs, _ = self._makeOne()
@@ -122,16 +125,19 @@ class TestZopeOrgSetup(unittest.TestCase):
         script_path = os.path.join('bin', docs.name)
         with open(script_path, 'r') as f:
             script = f.read()
-        self.assertIn("sys.exit(z3c.recipe.sphinxdoc.main({'z3c.recipe.sphinxdoc':",
-                      script)
+        self.assertIn(
+            "sys.exit(z3c.recipe.sphinxdoc.main({'z3c.recipe.sphinxdoc':",
+            script)
 
         # Go ahead and generate it
         subprocess.check_call('bin/docs')
 
-        # likewise, we can directly try to do it and it doesn't raise an exception
+        # likewise, we can directly try to do it and it doesn't raise an
+        # exception
         sphinxdoc.main(docs._projectsData, argv=['docs', '-W'])
 
-        # We can add another entry to the projectsData and we still don't raise anything
+        # We can add another entry to the projectsData and we still don't raise
+        # anything
         projects = dict(docs._projectsData)
         projects['another'] = projects['z3c.recipe.sphinxdoc']
         projects['another'][0] = '-W'
@@ -151,8 +157,9 @@ class TestZopeOrgSetup(unittest.TestCase):
         self.assertEqual(1, len(log_records))
         record = log_records[0]
         self.assertEqual("WARNING", record.levelname)
-        self.assertEqual("Specified egg 'this.egg.is.not.installed' cannot be resolved, ignoring.",
-                         record.getMessage())
+        self.assertEqual(
+            "Specified egg 'this.egg.is.not.installed' cannot be resolved,"
+            " ignoring.", record.getMessage())
 
     def test_override_css(self):
         docs, _ = self._makeOne(options={'default.css': EMPTY_FILE})
@@ -187,14 +194,12 @@ class TestZopeOrgSetup(unittest.TestCase):
             'gunicorn': ('http://docs.gunicorn.org/en/latest/', None),
             'pyquery': ('http://packages.python.org/pyquery/', None) }
             intersphinx_cache_limit = -1
-            """
-            )
+            """)
         })
         docs.install()
         self._check_conf_py_can_be_evald()
         conf = self._read_conf_file()
         self.assertIn('intersphinx_mapping', conf)
-
 
     def test_no_default_css_not_included(self):
         docs, _ = self._makeOne(options={'layout.html': '',
@@ -208,7 +213,9 @@ class TestZopeOrgSetup(unittest.TestCase):
         self.assertNotIn('html_style', conf)
 
         # Nothing was copied
-        self.assertFalse(os.path.exists(self.default_css_path), self.default_css_path)
-        self.assertFalse(os.path.exists(self.layout_html_path), self.layout_html_path)
+        self.assertFalse(
+            os.path.exists(self.default_css_path), self.default_css_path)
+        self.assertFalse(
+            os.path.exists(self.layout_html_path), self.layout_html_path)
 
         subprocess.check_call('bin/docs')
