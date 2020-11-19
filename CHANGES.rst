@@ -7,6 +7,8 @@
 
 - Add support for Python 3.7 up to 3.9.
 
+- Add support for Sphinx versions > 2.0.
+
 - Drop support for Python 3.4.
 
 
