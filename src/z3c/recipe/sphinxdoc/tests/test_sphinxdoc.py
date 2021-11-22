@@ -56,9 +56,12 @@ class TestZopeOrgSetup(unittest.TestCase):
             root_logger.addHandler(handler)
 
     def _makeOne(self, name='docs', options=None):
+        # Currently the Sphinx versions used (1.x and 4.x) require
+        # `docutils < 0.18` but zc.buildout is not able to automatically
+        # detect this.
         opts = {
             'doc-eggs': 'z3c.recipe.sphinxdoc',
-            'eggs': 'z3c.recipe.sphinxdoc'
+            'eggs': 'z3c.recipe.sphinxdoc\ndocutils < 0.18'
         }
         if options:
             opts.update(options)
